@@ -1,6 +1,6 @@
 import click
 
-from ..kgs import KGSService
+from ..kgs_service import KGSService
 
 
 @click.command()

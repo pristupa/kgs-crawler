@@ -9,6 +9,7 @@ setup(
     install_requires=[
         'psycopg2-binary==2.7.7',
         'Click==7.0',
+        'pydantic==0.20.1',
         'sgfmill==1.1.1',
     ],
     entry_points='''

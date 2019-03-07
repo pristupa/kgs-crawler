@@ -1,13 +1,20 @@
 import psycopg2
 
+from .settings import settings
+
 
 class Database:
     connection = None
 
     @classmethod
     def setup(cls):
-        # TODO: use environment variables
-        cls.connection = psycopg2.connect('host=secret dbname=secret user=secret password=secret')
+        connection_string = 'host={host} dbname={name} user={user} password={password}'.format(
+            host=settings.db_host,
+            name=settings.db_name,
+            user=settings.db_user,
+            password=settings.db_password,
+        )
+        cls.connection = psycopg2.connect(connection_string)
         cursor = cls.connection.cursor()
         cursor.execute(
             "CREATE TABLE IF NOT EXISTS players ("
