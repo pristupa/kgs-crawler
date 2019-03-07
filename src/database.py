@@ -15,6 +15,7 @@ class Database:
             "nickname VARCHAR(10) UNIQUE"
             ")",
         )
+        cursor.close()
         cls.connection.commit()
 
     @classmethod

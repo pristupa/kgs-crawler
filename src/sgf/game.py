@@ -1,15 +1,7 @@
-import enum
-
 from sgfmill.sgf import Sgf_game
 
-
-class Color(enum.Enum):
-    BLACK = 'b'
-    WHITE = 'w'
-
-
-class UnknownColorException(Exception):
-    pass
+from .color import Color
+from .color import UnknownColorException
 
 
 class Game:

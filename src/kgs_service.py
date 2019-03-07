@@ -1,8 +1,8 @@
 from io import BytesIO
 from zipfile import ZipFile
 
-from .client import KGSClient
-from .collector import KGSCollector
+from .kgs_client import KGSClient
+from .kgs_collector import KGSCollector
 from .sgf import Game
 
 
