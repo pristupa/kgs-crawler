@@ -1,17 +1,17 @@
-import sqlite3
-from sqlite3 import Connection
+import psycopg2
 
 
 class Database:
-    connection: Connection = None
+    connection = None
 
     @classmethod
     def setup(cls):
-        cls.connection = sqlite3.connect('kgs.db')
+        # TODO: use environment variables
+        cls.connection = psycopg2.connect('host=secret dbname=secret user=secret password=secret')
         cursor = cls.connection.cursor()
         cursor.execute(
             "CREATE TABLE IF NOT EXISTS players ("
-            "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+            "id SERIAL PRIMARY KEY, "
             "nickname VARCHAR(10) UNIQUE"
             ")",
         )

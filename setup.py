@@ -7,6 +7,7 @@ setup(
     python_requires='>=3.5',
     py_modules=['cli'],
     install_requires=[
+        'psycopg2-binary==2.7.7',
         'Click==7.0',
         'sgfmill==1.1.1',
     ],

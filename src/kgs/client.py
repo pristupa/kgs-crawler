@@ -6,5 +6,6 @@ class KGSClient:
 
     def download_month_archive(self, nickname: str, year: int, month: int) -> bytes:
         url = f'{self.BASE_URL}/servlet/archives/ru_RU/{nickname}-{year}-{month}.zip'
+        # TODO: Handle 404
         with urllib.request.urlopen(url) as zip_file:
             return zip_file.read()
