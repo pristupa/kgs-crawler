@@ -22,4 +22,4 @@ class KGSService:
             finally:
                 sgf_file.close()
             game = Game(sgf_content)
-            self._collector.store_game(game)
+            self._collector.store_game(game, raw_sgf_content=sgf_content)

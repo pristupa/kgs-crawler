@@ -18,9 +18,26 @@ class Database:
         cursor = cls.connection.cursor()
         cursor.execute(
             "CREATE TABLE IF NOT EXISTS players ("
-            "id SERIAL PRIMARY KEY, "
-            "nickname VARCHAR(10) UNIQUE"
+            "id SERIAL PRIMARY KEY,"
+            "nickname VARCHAR(10) UNIQUE NOT NULL"
             ")",
+        )
+        cursor.execute(
+            "CREATE TABLE IF NOT EXISTS games ("
+            "id SERIAL PRIMARY KEY,"
+            "played_at DATE NOT NULL,"
+            "white_nickname VARCHAR(10) NOT NULL,"
+            "black_nickname VARCHAR(10) NOT NULL,"
+            "white_rank TEXT,"
+            "black_rank TEXT,"
+            "white_won BOOLEAN,"
+            "board_size SMALLINT NOT NULL,"
+            "komi REAL NOT NULL,"
+            "handicap SMALLINT NOT NULL,"
+            "timelimit REAL,"
+            "overtime TEXT,"
+            "sgf_content BYTEA NOT NULL"
+            ")"
         )
         cursor.close()
         cls.connection.commit()
