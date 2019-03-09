@@ -33,7 +33,6 @@ class KGSService:
 
     def __init__(self):
         self._client = KGSClient()
-        self._archives_page_parser = _ArchivesPageParser()
 
     def try_load_games_for_month(self):
         nickname, archive_month = Database.fetch_one(
@@ -85,17 +84,18 @@ class KGSService:
                     sgf_content = sgf_file.read()
                 finally:
                     sgf_file.close()
-                game = Game(sgf_content)
 
-                black_nickname = game.get_player_nickname(Color.BLACK)
-                if PlayersStorage.add_player(black_nickname):
-                    self.load_months_for_player(black_nickname)
-
-                white_nickname = game.get_player_nickname(Color.WHITE)
-                if PlayersStorage.add_player(white_nickname):
-                    self.load_months_for_player(white_nickname)
-
-                GamesStorage.add_game(game, raw_sgf_content=sgf_content)
+                try:
+                    game = Game(sgf_content)
+                    black_nickname = game.get_player_nickname(Color.BLACK)
+                    if PlayersStorage.add_player(black_nickname):
+                        self.load_months_for_player(black_nickname)
+                    white_nickname = game.get_player_nickname(Color.WHITE)
+                    if PlayersStorage.add_player(white_nickname):
+                        self.load_months_for_player(white_nickname)
+                    GamesStorage.add_game(game, raw_sgf_content=sgf_content)
+                except ValueError:
+                    pass
         Database.execute(
             "UPDATE archives SET downloaded=TRUE WHERE nickname=%s AND archive_month=%s",
             (nickname, archive_month),
@@ -105,4 +105,6 @@ class KGSService:
 
     def load_months_for_player(self, nickname: str):
         archives_page = self._client.get_archives_page(nickname)
-        self._archives_page_parser.feed(archives_page)
+        archives_page_parser = _ArchivesPageParser()
+        archives_page_parser.feed(archives_page)
+        archives_page_parser.close()
