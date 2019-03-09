@@ -55,29 +55,41 @@ class KGSService:
 
         cursor = Database.connection.cursor()
         cursor.execute(
-            "SELECT 1 FROM archives WHERE nickname=%s AND archive_month=%s FOR UPDATE",
+            "SELECT downloaded FROM archives WHERE nickname=%s AND archive_month=%s FOR UPDATE",
+            (nickname, archive_month),
+        )
+        downloaded, = cursor.fetchone()
+        cursor.close()
+        if downloaded is not None:
+            Database.connection.commit()
+            return
+        cursor = Database.connection.cursor()
+        cursor.execute(
+            "UPDATE archives SET downloaded=FALSE WHERE nickname=%s AND archive_month=%s",
             (nickname, archive_month),
         )
         cursor.close()
+        Database.connection.commit()
         zip_data = self._client.download_month_archive(nickname, year, month)
-        zip_file = ZipFile(file=BytesIO(zip_data))
-        for sgf_file_name in zip_file.namelist():
-            sgf_file = zip_file.open(sgf_file_name)
-            try:
-                sgf_content = sgf_file.read()
-            finally:
-                sgf_file.close()
-            game = Game(sgf_content)
+        if zip_data is not None:
+            zip_file = ZipFile(file=BytesIO(zip_data))
+            for sgf_file_name in zip_file.namelist():
+                sgf_file = zip_file.open(sgf_file_name)
+                try:
+                    sgf_content = sgf_file.read()
+                finally:
+                    sgf_file.close()
+                game = Game(sgf_content)
 
-            black_nickname = game.get_player_nickname(Color.BLACK)
-            if PlayersStorage.add_player(black_nickname):
-                self.load_months_for_player(black_nickname)
+                black_nickname = game.get_player_nickname(Color.BLACK)
+                if PlayersStorage.add_player(black_nickname):
+                    self.load_months_for_player(black_nickname)
 
-            white_nickname = game.get_player_nickname(Color.WHITE)
-            if PlayersStorage.add_player(white_nickname):
-                self.load_months_for_player(white_nickname)
+                white_nickname = game.get_player_nickname(Color.WHITE)
+                if PlayersStorage.add_player(white_nickname):
+                    self.load_months_for_player(white_nickname)
 
-            GamesStorage.add_game(game, raw_sgf_content=sgf_content)
+                GamesStorage.add_game(game, raw_sgf_content=sgf_content)
         cursor = Database.connection.cursor()
         cursor.execute(
             "UPDATE archives SET downloaded=TRUE WHERE nickname=%s AND archive_month=%s",
