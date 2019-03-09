@@ -49,6 +49,12 @@ class KGSService:
             ArchivesStorage.add_month_record(nickname, year, month)
         archive_month = f'{year}-{month:02}'
 
+        archives_done, = Database.fetch_one("SELECT COUNT(*) FROM archives WHERE downloaded=TRUE")
+        archives_total, = Database.fetch_one("SELECT COUNT(*) FROM archives")
+        players_done, = Database.fetch_one("SELECT COUNT(*) FROM players")
+        games_done, = Database.fetch_one("SELECT COUNT(*) FROM games")
+        print(f'Archives: {archives_done}/{archives_total}; Players: {players_done}; Games: {games_done}')
+
         print(f'Trying to start loading games for {archive_month} for {nickname}...')
 
         downloaded, = Database.fetch_one(
