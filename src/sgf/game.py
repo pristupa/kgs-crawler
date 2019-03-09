@@ -11,8 +11,23 @@ class Game:
     def __init__(self, sgf_content: bytes):
         self._sgf_game = Sgf_game.from_bytes(sgf_content)
 
-    def get_date(self) -> str:
-        return self._sgf_game.root.get('DT')
+    def get_date(self) -> Optional[str]:
+        try:
+            date_string = self._sgf_game.root.get('DT')
+            if not isinstance(date_string, str):
+                return date_string
+            date_parts = date_string.split('-')
+            if len(date_string) != 3:
+                return None
+            try:
+                year = int(date_parts[0])
+                month = int(date_parts[0])
+                day = int(date_parts[0])
+            except ValueError:
+                return None
+            return f'{year}-{month:02}-{day:02}'
+        except KeyError:
+            return None
 
     def get_player_nickname(self, color: Color) -> str:
         nickname = self._sgf_game.get_player_name(color.value)
