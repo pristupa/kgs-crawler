@@ -37,7 +37,7 @@ class KGSService:
 
     def try_load_games_for_month(self):
         nickname, archive_month = Database.fetch_one(
-            "SELECT nickname, archive_month FROM archives WHERE downloaded=FALSE ORDER BY archive_month LIMIT 1"
+            "SELECT nickname, archive_month FROM archives WHERE downloaded IS NULL ORDER BY archive_month LIMIT 1"
         )
         year, month = archive_month.split('-')
         year = int(year)
@@ -51,15 +51,26 @@ class KGSService:
         archive_month = f'{year}-{month:02}'
 
         print(f'Trying to start loading games for {archive_month} for {nickname}...')
+
         downloaded, = Database.fetch_one(
-            "SELECT downloaded FROM archives WHERE nickname=%s AND archive_month=%s FOR UPDATE",
+            "SELECT downloaded FROM archives WHERE nickname=%s AND archive_month=%s",
             (nickname, archive_month),
         )
-        print(f'Loading started')
         if downloaded is not None:
             print(f'The task is already in progress by another worker. Aborting')
             Database.connection.commit()
             return
+
+        downloaded, = Database.fetch_one(
+            "SELECT downloaded FROM archives WHERE nickname=%s AND archive_month=%s FOR UPDATE",
+            (nickname, archive_month),
+        )
+        if downloaded is not None:
+            print(f'The task is already in progress by another worker. Aborting')
+            Database.connection.commit()
+            return
+
+        print(f'Loading started')
         Database.execute(
             "UPDATE archives SET downloaded=FALSE WHERE nickname=%s AND archive_month=%s",
             (nickname, archive_month),
