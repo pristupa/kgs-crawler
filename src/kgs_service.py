@@ -54,13 +54,16 @@ class KGSService:
         archive_month = f'{year}-{month:02}'
 
         cursor = Database.connection.cursor()
+        print(f'Trying to loading games for {archive_month} for {nickname}...')
         cursor.execute(
             "SELECT downloaded FROM archives WHERE nickname=%s AND archive_month=%s FOR UPDATE",
             (nickname, archive_month),
         )
+        print(f'Loading started')
         downloaded, = cursor.fetchone()
         cursor.close()
         if downloaded is not None:
+            print(f'The task is already in progress by another worker. Aborting')
             Database.connection.commit()
             return
         cursor = Database.connection.cursor()
@@ -96,7 +99,7 @@ class KGSService:
             (nickname, archive_month),
         )
         cursor.close()
-        print('Commit transaction...')
+        print('Saving games to database...')
         Database.connection.commit()
 
     def load_months_for_player(self, nickname: str):

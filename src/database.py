@@ -27,7 +27,7 @@ class Database:
             "id SERIAL PRIMARY KEY,"
             "nickname VARCHAR(10) NOT NULL,"
             "archive_month VARCHAR(7) NOT NULL,"
-            "downloaded BOOLEAN NOT NULL DEFAULT FALSE,"
+            "downloaded BOOLEAN DEFAULT NULL,"
             "UNIQUE (nickname, archive_month)"
             ")"
         )
