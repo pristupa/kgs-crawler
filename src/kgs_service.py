@@ -51,13 +51,14 @@ class KGSService:
         if manual:
             PlayersStorage.add_player(nickname)
             ArchivesStorage.add_month_record(nickname, year, month)
-        archive_month = f'{year}-{month}'
+        archive_month = f'{year}-{month:02}'
 
         cursor = Database.connection.cursor()
         cursor.execute(
             "SELECT 1 FROM archives WHERE nickname=%s AND archive_month=%s FOR UPDATE",
             (nickname, archive_month),
         )
+        cursor.close()
         zip_data = self._client.download_month_archive(nickname, year, month)
         zip_file = ZipFile(file=BytesIO(zip_data))
         for sgf_file_name in zip_file.namelist():
@@ -77,6 +78,7 @@ class KGSService:
                 self.load_months_for_player(white_nickname)
 
             GamesStorage.add_game(game, raw_sgf_content=sgf_content)
+        cursor = Database.connection.cursor()
         cursor.execute(
             "UPDATE archives SET downloaded=TRUE WHERE nickname=%s AND archive_month=%s",
             (nickname, archive_month),

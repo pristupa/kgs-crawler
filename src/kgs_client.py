@@ -21,7 +21,7 @@ class KGSClient:
 
     @sleep_and_retry
     @limits(calls=1, period=15)
-    def request_kgs(self, url) -> Response:
+    def request_kgs(self, url: str) -> Response:
         print(f'GET {url}')
         response = requests.get(url, headers=self.headers)
         if response.status_code != 200:
