@@ -36,12 +36,9 @@ class KGSService:
         self._archives_page_parser = _ArchivesPageParser()
 
     def try_load_games_for_month(self):
-        cursor = Database.connection.cursor()
-        cursor.execute(
+        nickname, archive_month = Database.fetch_one(
             "SELECT nickname, archive_month FROM archives WHERE downloaded=FALSE ORDER BY archive_month LIMIT 1"
         )
-        nickname, archive_month = cursor.fetchone()
-        cursor.close()
         year, month = archive_month.split('-')
         year = int(year)
         month = int(month)
@@ -53,25 +50,20 @@ class KGSService:
             ArchivesStorage.add_month_record(nickname, year, month)
         archive_month = f'{year}-{month:02}'
 
-        cursor = Database.connection.cursor()
         print(f'Trying to start loading games for {archive_month} for {nickname}...')
-        cursor.execute(
+        downloaded, = Database.fetch_one(
             "SELECT downloaded FROM archives WHERE nickname=%s AND archive_month=%s FOR UPDATE",
             (nickname, archive_month),
         )
         print(f'Loading started')
-        downloaded, = cursor.fetchone()
-        cursor.close()
         if downloaded is not None:
             print(f'The task is already in progress by another worker. Aborting')
             Database.connection.commit()
             return
-        cursor = Database.connection.cursor()
-        cursor.execute(
+        Database.execute(
             "UPDATE archives SET downloaded=FALSE WHERE nickname=%s AND archive_month=%s",
             (nickname, archive_month),
         )
-        cursor.close()
         Database.connection.commit()
         zip_data = self._client.download_month_archive(nickname, year, month)
         if zip_data is not None:
@@ -93,12 +85,10 @@ class KGSService:
                     self.load_months_for_player(white_nickname)
 
                 GamesStorage.add_game(game, raw_sgf_content=sgf_content)
-        cursor = Database.connection.cursor()
-        cursor.execute(
+        Database.execute(
             "UPDATE archives SET downloaded=TRUE WHERE nickname=%s AND archive_month=%s",
             (nickname, archive_month),
         )
-        cursor.close()
         print('Saving games to database...')
         Database.connection.commit()
 

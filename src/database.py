@@ -1,3 +1,6 @@
+from typing import List
+from typing import Tuple
+
 import psycopg2
 
 from .settings import settings
@@ -15,14 +18,13 @@ class Database:
             password=settings.db_password,
         )
         cls.connection = psycopg2.connect(connection_string)
-        cursor = cls.connection.cursor()
-        cursor.execute(
+        cls.execute(
             "CREATE TABLE IF NOT EXISTS players ("
             "id SERIAL PRIMARY KEY,"
             "nickname VARCHAR(10) UNIQUE NOT NULL"
             ")",
         )
-        cursor.execute(
+        cls.execute(
             "CREATE TABLE IF NOT EXISTS archives ("
             "id SERIAL PRIMARY KEY,"
             "nickname VARCHAR(10) NOT NULL,"
@@ -31,7 +33,7 @@ class Database:
             "UNIQUE (nickname, archive_month)"
             ")"
         )
-        cursor.execute(
+        cls.execute(
             "CREATE TABLE IF NOT EXISTS games ("
             "id SERIAL PRIMARY KEY,"
             "played_at DATE NOT NULL,"
@@ -49,10 +51,33 @@ class Database:
             "sgf_content_hash CHAR(40) UNIQUE NOT NULL"
             ")"
         )
-        cursor.close()
         cls.connection.commit()
 
     @classmethod
     def teardown(cls):
         if cls.connection is not None:
             cls.connection.close()
+
+    @classmethod
+    def fetch_all(cls, *args) -> List[Tuple]:
+        cursor = cls.connection.cursor()
+        cursor.execute(*args)
+        result = cursor.fetchall()
+        cursor.close()
+        return result
+
+    @classmethod
+    def fetch_one(cls, *args) -> Tuple:
+        cursor = cls.connection.cursor()
+        cursor.execute(*args)
+        result = cursor.fetchone()
+        cursor.close()
+        return result
+
+    @classmethod
+    def execute(cls, *args) -> int:
+        cursor = cls.connection.cursor()
+        cursor.execute(*args)
+        rowcount = cursor.rowcount
+        cursor.close()
+        return rowcount

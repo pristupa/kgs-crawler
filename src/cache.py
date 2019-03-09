@@ -7,13 +7,11 @@ class Cache:
 
     @classmethod
     def warmup(cls):
-        cursor = Database.connection.cursor()
-        cursor.execute("SELECT nickname, archive_month FROM archives")
-        for nickname, archive_month in cursor.fetchall():
+        result = Database.fetch_all("SELECT nickname, archive_month FROM archives")
+        for nickname, archive_month in result:
             cls.add_player(nickname)
             year, month = archive_month.split('-')
             cls.add_month(nickname, int(year), int(month))
-        cursor.close()
 
     @classmethod
     def has_player(cls, nickname: str):

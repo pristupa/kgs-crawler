@@ -16,7 +16,6 @@ class GamesStorage:
         if Cache.has_game(sgf_content_hash):
             return
 
-        cursor = Database.connection.cursor()
         data = {
             'played_at': game.get_date(),
             'white_nickname': game.get_player_nickname(Color.WHITE),
@@ -36,9 +35,8 @@ class GamesStorage:
         values = list(data.values())
         fields_string = ','.join(fields)
         values_string = ','.join(['%s'] * len(fields))
-        cursor.execute(
+        Database.execute(
             f"INSERT INTO games ({fields_string}) VALUES ({values_string}) ON CONFLICT (sgf_content_hash) DO NOTHING",
             values,
         )
-        cursor.close()
         Cache.add_game(sgf_content_hash)

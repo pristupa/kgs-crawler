@@ -9,9 +9,9 @@ class PlayersStorage:
         if Cache.has_player(nickname):
             return False
 
-        cursor = Database.connection.cursor()
-        cursor.execute("INSERT INTO players (nickname) VALUES (%s) ON CONFLICT (nickname) DO NOTHING", (nickname,))
-        rowcount = cursor.rowcount
-        cursor.close()
+        rowcount = Database.execute(
+            "INSERT INTO players (nickname) VALUES (%s) ON CONFLICT (nickname) DO NOTHING",
+            (nickname,),
+        )
         Cache.add_player(nickname)
         return rowcount > 0
