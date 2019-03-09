@@ -36,7 +36,11 @@ class KGSService:
 
     def try_load_games_for_month(self):
         nickname, archive_month = Database.fetch_one(
-            "SELECT nickname, archive_month FROM archives WHERE downloaded IS NULL ORDER BY archive_month LIMIT 1"
+            "SELECT nickname, archive_month FROM archives "
+            "WHERE downloaded IS NULL AND "
+            "archive_month <= '2016-12' "
+            "ORDER BY archive_month DESC "
+            "LIMIT 1"
         )
         year, month = archive_month.split('-')
         year = int(year)
