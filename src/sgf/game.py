@@ -46,7 +46,13 @@ class Game:
         return handicap
 
     def get_timelimit(self) -> Optional[float]:
-        return self._sgf_game.root.get('TM')
+        try:
+            return self._sgf_game.root.get('TM')
+        except KeyError:
+            return None
 
     def get_overtime(self) -> Optional[str]:
-        return self._sgf_game.root.get('OT')
+        try:
+            return self._sgf_game.root.get('OT')
+        except KeyError:
+            return None
