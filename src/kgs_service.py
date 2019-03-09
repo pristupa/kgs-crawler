@@ -104,7 +104,10 @@ class KGSService:
         Database.connection.commit()
 
     def load_months_for_player(self, nickname: str):
+        print(f'Getting archives page for {nickname}')
         archives_page = self._client.get_archives_page(nickname)
+        print(f'Parsing archives page for {nickname}')
         archives_page_parser = _ArchivesPageParser()
         archives_page_parser.feed(archives_page)
         archives_page_parser.close()
+        print(f'Getting archives page done for {nickname}')
