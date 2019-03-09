@@ -11,7 +11,6 @@ setup(
         'chardet==3.0.4',
         'Click==7.0',
         'dataclasses==0.6',
-        'fake-useragent==0.1.11',
         'idna==2.8',
         'kgs-crawler==0.1',
         'psycopg2-binary==2.7.7',
@@ -19,6 +18,7 @@ setup(
         'requests==2.21.0',
         'sgfmill==1.1.1',
         'urllib3==1.24.1',
+        'ratelimit==2.2.1',
     ],
     entry_points='''
         [console_scripts]

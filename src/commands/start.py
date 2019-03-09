@@ -11,5 +11,5 @@ def start():
     kgs.try_load_games_for_month()
 
     e = threading.Event()
-    while not e.wait(15):
+    while not e.wait(30):
         kgs.try_load_games_for_month()

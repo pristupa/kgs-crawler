@@ -49,8 +49,8 @@ class KGSService:
 
     def load_games_for_month(self, nickname: str, year: int, month: int, manual: bool = False):
         if manual:
+            PlayersStorage.add_player(nickname)
             ArchivesStorage.add_month_record(nickname, year, month)
-        print(f'Loading games archive for {month:02}/{year} for {nickname}...')
         archive_month = f'{year}-{month}'
 
         cursor = Database.connection.cursor()
@@ -82,6 +82,7 @@ class KGSService:
             (nickname, archive_month),
         )
         cursor.close()
+        print('Commit transaction...')
         Database.connection.commit()
 
     def load_months_for_player(self, nickname: str):
