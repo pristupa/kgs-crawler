@@ -54,7 +54,7 @@ class KGSService:
         archive_month = f'{year}-{month:02}'
 
         cursor = Database.connection.cursor()
-        print(f'Trying to loading games for {archive_month} for {nickname}...')
+        print(f'Trying to start loading games for {archive_month} for {nickname}...')
         cursor.execute(
             "SELECT downloaded FROM archives WHERE nickname=%s AND archive_month=%s FOR UPDATE",
             (nickname, archive_month),
