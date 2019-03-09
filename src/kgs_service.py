@@ -5,6 +5,7 @@ from zipfile import ZipFile
 
 from psycopg2 import OperationalError
 
+from src.sgf.color import UnknownColorException
 from .archives_storage import ArchivesStorage
 from .database import Database
 from .games_storage import GamesStorage
@@ -109,7 +110,7 @@ class KGSService:
                     if PlayersStorage.add_player(white_nickname):
                         self.load_months_for_player(white_nickname)
                     GamesStorage.add_game(game, raw_sgf_content=sgf_content)
-                except ValueError:
+                except (ValueError, UnknownColorException):
                     pass
         Database.execute(
             "UPDATE archives SET downloaded=TRUE WHERE nickname=%s AND archive_month=%s",
