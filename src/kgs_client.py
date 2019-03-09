@@ -2,10 +2,15 @@ import urllib.request
 
 
 class KGSClient:
-    BASE_URL = 'https://www.gokgs.com'
+    BASE_URL = 'https://www.gokgs.com/'
 
     def download_month_archive(self, nickname: str, year: int, month: int) -> bytes:
-        url = f'{self.BASE_URL}/servlet/archives/ru_RU/{nickname}-{year}-{month}.zip'
+        url = self.BASE_URL + f'servlet/archives/ru_RU/{nickname}-{year}-{month}.zip'
         # TODO: Handle 404
         with urllib.request.urlopen(url) as zip_file:
             return zip_file.read()
+
+    def get_archives_page(self, nickname: str) -> bytes:
+        url = self.BASE_URL + f'gameArchives.jsp?user={nickname}'
+        with urllib.request.urlopen(url) as archives_page:
+            return archives_page.read()

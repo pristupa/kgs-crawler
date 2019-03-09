@@ -18,4 +18,4 @@ def load_games_for_month(nickname: str, month: str):
         return
 
     kgs = KGSService()
-    kgs.load_games_for_month(nickname=nickname, year=year, month=month)
+    kgs.load_games_for_month(nickname=nickname, year=year, month=month, manual=True)

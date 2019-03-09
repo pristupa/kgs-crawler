@@ -1,14 +1,21 @@
+import hashlib
+
 import psycopg2
 
 from .database import Database
-from .sgf import Game
 from .sgf import Color
+from .sgf import Game
+from .cache import Cache
 
 
 class GamesStorage:
 
     @classmethod
     def add_game(cls, game: Game, raw_sgf_content: bytes):
+        sgf_content_hash = hashlib.sha1(raw_sgf_content)
+        if Cache.has_game(sgf_content_hash):
+            return
+
         cursor = Database.connection.cursor()
         data = {
             'played_at': game.get_date(),
@@ -23,11 +30,15 @@ class GamesStorage:
             'timelimit': game.get_timelimit(),
             'overtime': game.get_overtime(),
             'sgf_content': psycopg2.Binary(raw_sgf_content),
+            'sgf_content_hash': sgf_content_hash.hexdigest(),
         }
         fields = list(data.keys())
         values = list(data.values())
         fields_string = ','.join(fields)
         values_string = ','.join(['%s'] * len(fields))
-        cursor.execute(f"INSERT INTO games ({fields_string}) VALUES ({values_string})", values)
+        cursor.execute(
+            f"INSERT INTO games ({fields_string}) VALUES ({values_string}) ON CONFLICT (sgf_content_hash) DO NOTHING",
+            values,
+        )
         cursor.close()
-        Database.connection.commit()
+        Cache.add_game(sgf_content_hash)

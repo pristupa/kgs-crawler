@@ -5,12 +5,13 @@ from .database import Database
 class PlayersStorage:
 
     @classmethod
-    def add_player(cls, nickname: str):
+    def add_player(cls, nickname: str) -> bool:
         if Cache.has_player(nickname):
-            return
+            return False
 
-        Cache.add_player(nickname)
         cursor = Database.connection.cursor()
         cursor.execute("INSERT INTO players (nickname) VALUES (%s) ON CONFLICT (nickname) DO NOTHING", (nickname,))
+        rowcount = cursor.rowcount
         cursor.close()
-        Database.connection.commit()
+        Cache.add_player(nickname)
+        return rowcount > 0

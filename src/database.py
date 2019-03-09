@@ -23,6 +23,15 @@ class Database:
             ")",
         )
         cursor.execute(
+            "CREATE TABLE IF NOT EXISTS archives ("
+            "id SERIAL PRIMARY KEY,"
+            "nickname VARCHAR(10) NOT NULL,"
+            "archive_month VARCHAR(7) NOT NULL,"
+            "downloaded BOOLEAN NOT NULL DEFAULT FALSE,"
+            "UNIQUE (nickname, archive_month)"
+            ")"
+        )
+        cursor.execute(
             "CREATE TABLE IF NOT EXISTS games ("
             "id SERIAL PRIMARY KEY,"
             "played_at DATE NOT NULL,"
@@ -36,7 +45,8 @@ class Database:
             "handicap SMALLINT NOT NULL,"
             "timelimit REAL,"
             "overtime TEXT,"
-            "sgf_content BYTEA NOT NULL"
+            "sgf_content BYTEA NOT NULL,"
+            "sgf_content_hash CHAR(40) UNIQUE NOT NULL"
             ")"
         )
         cursor.close()
