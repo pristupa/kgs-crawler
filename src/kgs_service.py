@@ -3,13 +3,15 @@ from html.parser import HTMLParser
 from io import BytesIO
 from zipfile import ZipFile
 
+from psycopg2 import OperationalError
+
 from .archives_storage import ArchivesStorage
 from .database import Database
-from .kgs_client import KGSClient
-from .sgf import Game
-from .sgf import Color
-from .players_storage import PlayersStorage
 from .games_storage import GamesStorage
+from .kgs_client import KGSClient
+from .players_storage import PlayersStorage
+from .sgf import Color
+from .sgf import Game
 
 link_regexp = re.compile('gameArchives\.jsp\?user=([^&]+)&year=(\d+)&month=(\d+)')
 
@@ -45,7 +47,10 @@ class KGSService:
         year, month = archive_month.split('-')
         year = int(year)
         month = int(month)
-        self.load_games_for_month(nickname, year, month)
+        try:
+            self.load_games_for_month(nickname, year, month)
+        except OperationalError:
+            pass
 
     def load_games_for_month(self, nickname: str, year: int, month: int, manual: bool = False):
         if manual:
@@ -114,10 +119,7 @@ class KGSService:
         Database.connection.commit()
 
     def load_months_for_player(self, nickname: str):
-        print(f'Getting archives page for {nickname}')
         archives_page = self._client.get_archives_page(nickname)
-        print(f'Parsing archives page for {nickname}')
         archives_page_parser = _ArchivesPageParser()
         archives_page_parser.feed(archives_page)
         archives_page_parser.close()
-        print(f'Getting archives page done for {nickname}')
