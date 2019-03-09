@@ -7,10 +7,18 @@ setup(
     python_requires='>=3.5',
     py_modules=['cli'],
     install_requires=[
-        'psycopg2-binary==2.7.7',
+        'certifi==2019.3.9',
+        'chardet==3.0.4',
         'Click==7.0',
+        'dataclasses==0.6',
+        'fake-useragent==0.1.11',
+        'idna==2.8',
+        'kgs-crawler==0.1',
+        'psycopg2-binary==2.7.7',
         'pydantic==0.20.1',
+        'requests==2.21.0',
         'sgfmill==1.1.1',
+        'urllib3==1.24.1',
     ],
     entry_points='''
         [console_scripts]

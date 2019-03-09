@@ -86,4 +86,4 @@ class KGSService:
 
     def load_months_for_player(self, nickname: str):
         archives_page = self._client.get_archives_page(nickname)
-        self._archives_page_parser.feed(archives_page.decode())
+        self._archives_page_parser.feed(archives_page)
