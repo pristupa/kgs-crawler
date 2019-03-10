@@ -29,7 +29,7 @@ class KGSClient:
         return self.request_kgs(url).text
 
     @sleep_and_retry
-    @limits(calls=1, period=15)
+    @limits(calls=1, period=12)
     def request_kgs(self, url: str) -> Response:
         print(f'GET {url}')
         response = requests.get(url, headers=self.headers)
