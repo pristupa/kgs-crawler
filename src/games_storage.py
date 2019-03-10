@@ -12,7 +12,7 @@ from .cache import Cache
 class GamesStorage:
 
     @classmethod
-    def add_game(cls, game: Game, raw_sgf_content: bytes, year: Optional[int] = None, month: Optional[int] = None):
+    def add_game(cls, game: Game, raw_sgf_content: bytes, year: int, month: int):
         sgf_content_hash = hashlib.sha1(raw_sgf_content)
         if Cache.has_game(sgf_content_hash):
             return

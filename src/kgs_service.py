@@ -4,6 +4,7 @@ from io import BytesIO
 from zipfile import ZipFile
 
 from psycopg2 import OperationalError
+from .settings import settings
 
 from src.sgf.color import UnknownColorException
 from .archives_storage import ArchivesStorage
@@ -103,12 +104,13 @@ class KGSService:
 
                 try:
                     game = Game(sgf_content)
-                    black_nickname = game.get_player_nickname(Color.BLACK)
-                    if PlayersStorage.add_player(black_nickname):
-                        self.load_months_for_player(black_nickname)
-                    white_nickname = game.get_player_nickname(Color.WHITE)
-                    if PlayersStorage.add_player(white_nickname):
-                        self.load_months_for_player(white_nickname)
+                    if settings.download_games_only != '1':
+                        black_nickname = game.get_player_nickname(Color.BLACK)
+                        if PlayersStorage.add_player(black_nickname):
+                            self.load_months_for_player(black_nickname)
+                        white_nickname = game.get_player_nickname(Color.WHITE)
+                        if PlayersStorage.add_player(white_nickname):
+                            self.load_months_for_player(white_nickname)
                     GamesStorage.add_game(game, raw_sgf_content=sgf_content, year=year, month=month)
                 except (ValueError, UnknownColorException):
                     pass
