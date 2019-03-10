@@ -36,6 +36,8 @@ class Database:
         cls.execute(
             "CREATE TABLE IF NOT EXISTS games ("
             "id SERIAL PRIMARY KEY,"
+            "year SMALLINT DEFAULT NULL,"
+            "month SMALLINT DEFAULT NULL,"
             "played_at DATE,"
             "white_nickname VARCHAR(20) NOT NULL,"
             "black_nickname VARCHAR(20) NOT NULL,"

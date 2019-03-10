@@ -1,4 +1,5 @@
 import hashlib
+from typing import Optional
 
 import psycopg2
 
@@ -11,13 +12,15 @@ from .cache import Cache
 class GamesStorage:
 
     @classmethod
-    def add_game(cls, game: Game, raw_sgf_content: bytes):
+    def add_game(cls, game: Game, raw_sgf_content: bytes, year: Optional[int] = None, month: Optional[int] = None):
         sgf_content_hash = hashlib.sha1(raw_sgf_content)
         if Cache.has_game(sgf_content_hash):
             return
 
         data = {
             'played_at': game.get_date(),
+            'yaer': year,
+            'month': month,
             'white_nickname': game.get_player_nickname(Color.WHITE),
             'black_nickname': game.get_player_nickname(Color.BLACK),
             'white_rank': game.get_player_rank(Color.WHITE),

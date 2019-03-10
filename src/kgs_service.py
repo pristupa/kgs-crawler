@@ -109,7 +109,7 @@ class KGSService:
                     white_nickname = game.get_player_nickname(Color.WHITE)
                     if PlayersStorage.add_player(white_nickname):
                         self.load_months_for_player(white_nickname)
-                    GamesStorage.add_game(game, raw_sgf_content=sgf_content)
+                    GamesStorage.add_game(game, raw_sgf_content=sgf_content, year=year, month=month)
                 except (ValueError, UnknownColorException):
                     pass
         Database.execute(
