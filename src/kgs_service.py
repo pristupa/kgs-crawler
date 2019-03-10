@@ -3,8 +3,8 @@ from html.parser import HTMLParser
 from io import BytesIO
 from zipfile import ZipFile
 
+from psycopg2 import DataError
 from psycopg2 import OperationalError
-from .settings import settings
 
 from src.sgf.color import UnknownColorException
 from .archives_storage import ArchivesStorage
@@ -12,6 +12,7 @@ from .database import Database
 from .games_storage import GamesStorage
 from .kgs_client import KGSClient
 from .players_storage import PlayersStorage
+from .settings import settings
 from .sgf import Color
 from .sgf import Game
 
@@ -112,7 +113,7 @@ class KGSService:
                         if PlayersStorage.add_player(white_nickname):
                             self.load_months_for_player(white_nickname)
                     GamesStorage.add_game(game, raw_sgf_content=sgf_content, year=year, month=month)
-                except (ValueError, UnknownColorException):
+                except (ValueError, UnknownColorException, DataError):
                     pass
         Database.execute(
             "UPDATE archives SET downloaded=TRUE WHERE nickname=%s AND archive_month=%s",
