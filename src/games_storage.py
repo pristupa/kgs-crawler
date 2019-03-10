@@ -19,7 +19,7 @@ class GamesStorage:
 
         data = {
             'played_at': game.get_date(),
-            'yaer': year,
+            'year': year,
             'month': month,
             'white_nickname': game.get_player_nickname(Color.WHITE),
             'black_nickname': game.get_player_nickname(Color.BLACK),
