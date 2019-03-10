@@ -94,6 +94,8 @@ class KGSService:
         )
         Database.connection.commit()
         zip_data = self._client.download_month_archive(nickname, year, month)
+        if zip_data is None:
+            zip_data = self._client.download_month_archive(nickname + '-all', year, month)
         if zip_data is not None:
             zip_file = ZipFile(file=BytesIO(zip_data))
             for sgf_file_name in zip_file.namelist():
@@ -102,7 +104,6 @@ class KGSService:
                     sgf_content = sgf_file.read()
                 finally:
                     sgf_file.close()
-
                 try:
                     game = Game(sgf_content)
                     if settings.download_games_only != '1':

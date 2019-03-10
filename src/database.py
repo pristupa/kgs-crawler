@@ -21,7 +21,8 @@ class Database:
         cls.execute(
             "CREATE TABLE IF NOT EXISTS players ("
             "id SERIAL PRIMARY KEY,"
-            "nickname VARCHAR(20) UNIQUE NOT NULL"
+            "nickname VARCHAR(20) UNIQUE NOT NULL,"
+            "max_rank TEXT DEFAULT NULL"
             ")",
         )
         cls.execute(
