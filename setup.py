@@ -14,7 +14,7 @@ setup(
         'idna==2.8',
         'kgs-crawler==0.1',
         'psycopg2-binary==2.7.7',
-        'pydantic==0.20.1',
+        'pydantic==1.6.2',
         'requests==2.21.0',
         'sgfmill==1.1.1',
         'urllib3==1.24.1',
