@@ -17,7 +17,7 @@ setup(
         'pydantic==0.20.1',
         'requests==2.21.0',
         'sgfmill==1.1.1',
-        'urllib3==1.24.1',
+        'urllib3==1.26.5',
         'ratelimit==2.2.1',
     ],
     entry_points='''
