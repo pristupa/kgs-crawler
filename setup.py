@@ -7,7 +7,7 @@ setup(
     python_requires='>=3.5',
     py_modules=['cli'],
     install_requires=[
-        'certifi==2019.3.9',
+        'certifi==2022.12.7',
         'chardet==3.0.4',
         'Click==7.0',
         'dataclasses==0.6',
